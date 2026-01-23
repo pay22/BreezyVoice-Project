@@ -77,3 +77,27 @@ def breezy_regex_engine(text):
 test_str = "你是不知道，他這個人正經起來很奇怪。"
 print(f"原本: {test_str}")
 print(f"Regex 轉換: {breezy_regex_engine(test_str)}")
+
+def breezy_simple_regex(text):
+    # 規則 1：最基礎替換 (直接取代)
+    # 把「我」換成「偶」
+    text = re.sub(r'我', '偶', text)
+    
+    # 規則 2：多選一替換 (使用 | 符號)
+    # 把「什麼」或「啥」都換成「蝦咪」
+    # | 代表「或」(OR)
+    text = re.sub(r'什麼|啥', '蝦咪', text)
+    
+    # 規則 3：捕捉結尾並加上語助詞
+    # $ 代表「句子的結尾」
+    # 我們在句尾加上一個溫馨的「齁」
+    text = re.sub(r'[。！!]$', '齁', text)
+    
+    return text
+
+# 測試看看
+input_str = "我不知道你在說什麼！"
+output_str = breezy_simple_regex(input_str)
+
+print(f"原本：{input_str}")
+print(f"轉後：{output_str}")
