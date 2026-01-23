@@ -2,6 +2,7 @@
 from gtts import gTTS
 import sys
 import os
+import re
 
 # 1. 定義想說的話（台灣國語風格測試）
 text = "你好，這裡是 BreezyVoice 專案，我們準備要開始寫程式囉！"
@@ -58,3 +59,21 @@ if __name__ == "__main__":
     print(f"轉換結果: {tw_text}")
     tts = gTTS(text=tw_text, lang='zh-TW')
     tts.save("custom.mp3")
+
+def breezy_regex_engine(text):
+    # 規則 1: 所有的「ㄕ」後面接一個母音時，把「ㄕ」換成「ㄙ」
+    # \b 代表邊界，或是直接指定字元
+    text = re.sub(r'是', '速', text)
+    
+    # 規則 2: 把所有「知道」換成「珠道」
+    text = re.sub(r'知道', '珠道', text)
+    
+    # 規則 3: 模擬恩/昂不分 (簡單示範)
+    # 把「正」經 變成 「真」經
+    text = re.sub(r'正', '真', text)
+    
+    return text
+
+test_str = "你是不知道，他這個人正經起來很奇怪。"
+print(f"原本: {test_str}")
+print(f"Regex 轉換: {breezy_regex_engine(test_str)}")
