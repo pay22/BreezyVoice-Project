@@ -101,3 +101,43 @@ output_str = breezy_simple_regex(input_str)
 
 print(f"原本：{input_str}")
 print(f"轉後：{output_str}")
+
+def generate_mp3_regex_engine(input_text):
+    # 1. 執行 Regex 轉換
+    converted_text = breezy_regex_engine(input_text)
+    print(f"原始文字：{input_text}")
+    print(f"轉換後文字：{converted_text}")
+
+    # 2. 呼叫 gTTS 生成語音
+    print("正在生成 MP3...")
+    tts = gTTS(text=converted_text, lang='zh-TW')
+    
+    # 3. 儲存檔案
+    filename = "breezy_output_engine.mp3"
+    tts.save(filename)
+    print(f"成功！檔案已儲存為: {filename}")
+
+if __name__ == "__main__":
+    # 測試一段有代表性的話
+    my_text = "你是不知道，他這個人正經起來很奇怪。"
+    generate_mp3_regex_engine(my_text)    
+
+def generate_mp3_regex(input_text):
+    # 1. 執行 Regex 轉換
+    converted_text = breezy_simple_regex(input_text)
+    print(f"原始文字：{input_text}")
+    print(f"轉換後文字：{converted_text}")
+
+    # 2. 呼叫 gTTS 生成語音
+    print("正在生成 MP3...")
+    tts = gTTS(text=converted_text, lang='zh-TW')
+    
+    # 3. 儲存檔案
+    filename = "breezy_output.mp3"
+    tts.save(filename)
+    print(f"成功！檔案已儲存為: {filename}")
+
+if __name__ == "__main__":
+    # 測試一段有代表性的話
+    my_text = "我不知道你在說什麼！"
+    generate_mp3_regex(my_text)
