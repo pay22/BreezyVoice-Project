@@ -3,6 +3,7 @@ from gtts import gTTS
 import sys
 import os
 import re
+import random  # 引入隨機模組
 
 # 1. 定義想說的話（台灣國語風格測試）
 text = "你好，這裡是 BreezyVoice 專案，我們準備要開始寫程式囉！"
@@ -141,3 +142,106 @@ if __name__ == "__main__":
     # 測試一段有代表性的話
     my_text = "我不知道你在說什麼！"
     generate_mp3_regex(my_text)
+
+# 20240124 New 高級的 regex
+def breezy_advanced_regex(text):
+    # 之前的規則保留...
+    text = re.sub(r'我', '偶', text)
+    
+    # --- 分組功能開始 ---
+    
+    # 規則：吃 [某種] 飯 -> 甲 [某種] 噴
+    # 例如：吃午飯 -> 甲午噴、吃軟飯 -> 甲軟噴
+    text = re.sub(r'吃(.*)飯', r'甲\1噴', text)
+    
+    # 規則：真的很 [形容詞] -> 真滴很 [形容詞] 啦
+    # 例如：真的很漂亮 -> 真滴很漂亮啦
+    text = re.sub(r'真的很(.*)', r'真滴很\1啦', text)
+    
+    return text
+
+def generate_mp3_advanced_regex(input_text):
+    # 1. 執行 Regex 轉換
+    converted_text = breezy_advanced_regex(input_text)
+    print(f"原始文字：{input_text}")
+    print(f"轉換後文字：{converted_text}")
+
+    # 2. 呼叫 gTTS 生成語音
+    print("正在生成 MP3...")
+    tts = gTTS(text=converted_text, lang='zh-TW')
+    
+    # 3. 儲存檔案
+    filename = "breezy_output_advanced.mp3"
+    tts.save(filename)
+    print(f"成功！檔案已儲存為: {filename}")
+
+if __name__ == "__main__":
+    # 測試一段有代表性的話
+    my_text = "我不知道你在說什麼！"
+    generate_mp3_advanced_regex(my_text)
+
+# 20240124 New 分組抓取
+def breezy_advanced_regex(text):
+    # 規則 1：分組抓取 (吃 [東西] 飯 -> 甲 [東西] 噴)
+    # (.*?) 是非貪婪匹配，確保它抓到最近的「飯」就停
+    text = re.sub(r'吃(.*?)飯', r'甲\1噴', text)
+    
+    # 規則 2：人名變換 ([人名] 很正 -> [人名] 真經)
+    # 例如：小明很正 -> 小明真經
+    text = re.sub(r'(.*?)很正', r'\1真經', text)
+
+    # 規則 3：基礎替換 (保留之前的台味)
+    text = re.sub(r'我', '偶', text)
+    
+    return text
+
+def generate_breezy_mp3(input_text):
+    # 執行轉換
+    final_text = breezy_advanced_regex(input_text)
+    print(f"原始輸入：{input_text}")
+    print(f"靈活轉換：{final_text}")
+
+    # 生成語音
+    tts = gTTS(text=final_text, lang='zh-TW')
+    filename = "grouping_test.mp3"
+    tts.save(filename)
+    print(f"成功！已生成含分組邏輯的語音檔: {filename}")
+
+if __name__ == "__main__":
+    # 你可以從終端機輸入，例如: make say MSG="我想吃排骨飯"
+    user_input = sys.argv[1] if len(sys.argv) > 1 else "我下午想吃排骨飯，我覺得那個女生很正。"
+    generate_breezy_mp3(user_input)
+
+def breezy_random_engine(text):
+    # --- 之前的 Regex 規則 (保留) ---
+    text = re.sub(r'我', '偶', text)
+    text = re.sub(r'吃(.*?)飯', r'甲\1噴', text)
+    
+    # --- 挑戰課題：機率性語助詞 ---
+    # 定義靈魂語助詞清單
+    particles = ["啦", "齁", "嘿啦", "捏", "喔", "咧"]
+    
+    # 隨機挑選一個
+    chosen_particle = random.choice(particles)
+    
+    # 將結尾標點符號換成隨機語助詞，或者直接加在後面
+    if re.search(r'[。！!]$', text):
+        text = re.sub(r'[。！!]$', chosen_particle, text)
+    else:
+        text += chosen_particle
+        
+    return text
+
+def generate_random_mp3(input_text):
+    final_text = breezy_random_engine(input_text)
+    print(f"原始輸入：{input_text}")
+    print(f"隨機變幻：{final_text}")
+
+    tts = gTTS(text=final_text, lang='zh-TW')
+    filename = "random_breezy.mp3"
+    tts.save(filename)
+    print(f"成功！已生成隨機語助詞語音: {filename}")
+
+if __name__ == "__main__":
+    user_input = sys.argv[1] if len(sys.argv) > 1 else "我今天想吃飯。"
+    generate_random_mp3(user_input)
