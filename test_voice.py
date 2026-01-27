@@ -245,3 +245,48 @@ def generate_random_mp3(input_text):
 if __name__ == "__main__":
     user_input = sys.argv[1] if len(sys.argv) > 1 else "我今天想吃飯。"
     generate_random_mp3(user_input)
+
+def breezy_probability_engine(text):
+    # --- 1. 基礎 Regex 轉換 (保留) ---
+    text = re.sub(r'我', '偶', text)
+    text = re.sub(r'什麼|啥', '蝦咪', text)
+    
+    # --- 2. 機率性語助詞注入 ---
+    # 設定觸發機率：0.7 代表 70% 的機會會加語助詞
+    probability = 0.7
+    
+    # 產生一個 0~1 的隨機數
+    chance = random.random()
+    print(f"本次隨機點數: {chance:.2f} (門檻: {probability})")
+    
+    if chance < probability:
+        # 觸發成功：從清單中挑一個
+        particles = ["啦", "齁", "嘿啦", "捏", "喔", "咧"]
+        chosen = random.choice(particles)
+        
+        # 替換或加上語助詞
+        if re.search(r'[。！!]$', text):
+            text = re.sub(r'[。！!]$', chosen, text)
+        else:
+            text += chosen
+        print(f"結果：觸發語助詞「{chosen}」")
+    else:
+        # 觸發失敗：保持冷酷
+        print("結果：本次不加語助詞 (冷酷模式)")
+        
+    return text
+
+def generate_prob_mp3(input_text):
+    # 執行機率引擎
+    final_text = breezy_probability_engine(input_text)
+    print(f"最終合成文字：{final_text}")
+
+    # 生成 MP3
+    tts = gTTS(text=final_text, lang='zh-TW')
+    filename = "prob_breezy.mp3"
+    tts.save(filename)
+    print(f"成功！已生成機率語音檔: {filename}")
+
+if __name__ == "__main__":
+    user_input = sys.argv[1] if len(sys.argv) > 1 else "我不知道你在說什麼。"
+    generate_prob_mp3(user_input)
