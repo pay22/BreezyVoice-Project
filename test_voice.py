@@ -4,6 +4,7 @@ import sys
 import os
 import re
 import random  # 引入隨機模組
+import json  # 引入處理 JSON 的模組
 
 # 1. 定義想說的話（台灣國語風格測試）
 text = "你好，這裡是 BreezyVoice 專案，我們準備要開始寫程式囉！"
@@ -290,3 +291,35 @@ def generate_prob_mp3(input_text):
 if __name__ == "__main__":
     user_input = sys.argv[1] if len(sys.argv) > 1 else "我不知道你在說什麼。"
     generate_prob_mp3(user_input)
+
+def load_rules():
+    # 讀取外部設定檔
+    with open('rules.json', 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+def breezy_engine(text):
+    config = load_rules()
+    
+    # 1. 執行基礎替換 (從 JSON 讀取規則)
+    for key, value in config["replacements"].items():
+        text = text.replace(key, value)
+    
+    # 2. 機率性語助詞 (從 JSON 讀取機率與清單)
+    if random.random() < config["trigger_probability"]:
+        chosen = random.choice(config["particles"])
+        if re.search(r'[。！!]$', text):
+            text = re.sub(r'[。！!]$', chosen, text)
+        else:
+            text += chosen
+    return text
+
+def generate_mp3(input_text):
+    final_text = breezy_engine(input_text)
+    print(f"最終合成文字：{final_text}")
+    tts = gTTS(text=final_text, lang='zh-TW')
+    tts.save("json_breezy.mp3")
+    print("成功！已根據 rules.json 生成 MP3。")
+
+if __name__ == "__main__":
+    user_input = sys.argv[1] if len(sys.argv) > 1 else "我就是不知道他在說什麼。"
+    generate_mp3(user_input)
