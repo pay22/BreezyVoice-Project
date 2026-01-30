@@ -15,3 +15,7 @@ test:
 # 讓你可以在終端機輸入 make say MSG="內容" 來測試
 say:
 	$(PYTHON) test_voice.py "$(MSG)"
+
+# 執行批次處理
+batch:
+	$(PYTHON) test_voice.py --batch tasks.txt	

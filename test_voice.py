@@ -323,3 +323,31 @@ def generate_mp3(input_text):
 if __name__ == "__main__":
     user_input = sys.argv[1] if len(sys.argv) > 1 else "我就是不知道他在說什麼。"
     generate_mp3(user_input)
+
+def batch_process(input_file):
+    # 讀取所有規則 (延用你之前的 load_rules)
+    config = load_rules()
+    
+    # 讀取任務清單
+    with open(input_file, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+
+    print(f"--- 開始批次處理，共 {len(lines)} 則任務 ---")
+
+    for i, line in enumerate(lines):
+        text = line.strip()
+        if not text: continue  # 跳過空行
+        
+        # 執行轉換邏輯
+        final_text = breezy_engine(text)
+        
+        # 自動命名
+        filename = f"output_{i+1:02d}.mp3"
+        
+        print(f"[{i+1}/{len(lines)}] 正在處理: {text} -> {final_text}")
+        
+        # 生成語音
+        tts = gTTS(text=final_text, lang='zh-TW')
+        tts.save(filename)
+
+    print("--- 批次處理完成！ ---")    
